@@ -1,12 +1,12 @@
 import random
-from Single_Server.config import MIN_PATIENCE, MAX_PATIENCE
-from Single_Server.assets.status import Status
+from simulation.config import MIN_PATIENCE, MAX_PATIENCE
+from assets.status import Status
 
 
 class Customer:
     """ A class used to represent a Customer.
 
-       It will hold all the information regarding the interaction o f this gen_customer with the whole system.
+       It will hold all the information regarding the interaction o f this gen_customer with the whole system.py.
        It will hold the times at which all the events occurred for later reporting and analysis.
 
        Attributes
@@ -20,11 +20,11 @@ class Customer:
        serve : float
            The time when this gen_customer was served
        leave : float
-           The time when this gen_customer left the system
+           The time when this gen_customer left the system.py
        wait : float
            The time this gen_customer had to wait in line before either leaving or being served
        total_time : float
-            The time this gen_customer spend in the system from the moment it arrived until it left
+            The time this gen_customer spend in the system.py from the moment it arrived until it left
         status : Status
             The status in which this gen_customer is currently at
 

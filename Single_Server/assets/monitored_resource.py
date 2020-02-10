@@ -17,7 +17,7 @@ class MonitoredResource:
         in_service : list
             The list that will represent the resource being in use
         queue : list
-            The list that will represent the waiting queue in the system
+            The list that will represent the waiting queue in the system.py
         in_service_event : list
             The list of the events occurring in the in_service list. The elements will have event time and size of queue
         queue_event : list

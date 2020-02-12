@@ -156,7 +156,10 @@ class SimSystem:
         """
         # Setup and start the simulation
         print(self._name)
-        random.seed(RANDOM_SEED)  # Set the seed for the randomness in the simulation
+        if RANDOM_SEED != -1:
+            random.seed(RANDOM_SEED)  # Set the seed for the randomness in the simulation
+        else:
+            random.seed()
 
         # Start processes and run
         start_time = self.env.now

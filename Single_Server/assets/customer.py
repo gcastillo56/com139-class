@@ -48,13 +48,25 @@ class Customer:
         self.patience = random.uniform(MIN_PATIENCE, MAX_PATIENCE)
         self.arrive = -1
         self.serve = -1
-        self.leave = -1
+        self._leave = -1
         self.wait = -1
         self.total_time = -1
+        self.serving_time = -1
         self.status = Status.WAIT
 
     def __str__(self) -> str:
         return "Customer %02d" % self._id
+
+    @property
+    def leave(self):
+        return self._leave
+
+    @leave.setter
+    def leave(self, value):
+        self._leave = value
+        self.total_time = self.leave - self.arrive
+        if self.serve != -1:
+            self.serving_time = self.leave - self.serve
 
     def report(self) -> str:
         """ Create a string that will hold all the information of the object to create a report.
@@ -64,16 +76,15 @@ class Customer:
             str
                 A string holding all the information hold by the gen_customer
         """
-        self.total_time = self.leave - self.arrive
         reportVal = "Customer %02d | %s | " % (self._id, self.status)
         # reportVal += "Patience: %6.3f | " % (self.patience)
         reportVal += "Arrived: %7.3f  Left: %7.3f ==> Total time: %6.3f | " % (self.arrive, self.leave, self.total_time)
         if self.wait > 0:
-            reportVal += "Waited: %6.3f | " % (self.wait)
+            reportVal += "Waited: %6.3f | " % self.wait
         else:
             reportVal += " -- NO WAIT -- | "
-        if self.serve != -1:
-            reportVal += "Serve time: %6.3f " % (self.leave - self.serve)
+        if self.serving_time != -1:
+            reportVal += "Serve time: %6.3f " % self.serving_time
         # else:
         #    reportVal += "Diff: %6.3f " % (self.leave - self.arrive)
         return reportVal

@@ -31,6 +31,8 @@ def report(customers: list, counter: MonitoredResource, total_time: float) -> No
     if report_customers:
         report_all_by_field_obj(customers, 'wait')
         report_all_by_field_obj(customers, 'total_time')
+        report_all_by_field_obj(customers, 'serving_time', True, -1.0)
+        report_all_by_field_obj(customers, 'status')
 
     report_ts = True
     # Report the events in the queue

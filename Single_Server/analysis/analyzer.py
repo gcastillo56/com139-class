@@ -155,29 +155,30 @@ def cumulative_time_ts(values: dict, my_label: str = '', x_label: str = '', y_la
 
 def get_cumulative_time_ts(my_list: list, total_time: float) -> dict:
     values = {}
-    lastTimeMark = 0.0
-    lastMark = 0
-    for i in range(len(my_list)):
-        key = lastMark
-        tempVal = 0.0
-        if key in values:
-            tempVal = values[key]
-        tempVal += my_list[i]['time'] - lastTimeMark
-        values[key] = tempVal
-        lastTimeMark = my_list[i]['time']
-        lastMark = my_list[i]['value']
-    values[lastMark] += total_time - lastTimeMark
+    if my_list:
+        lastTimeMark = 0.0
+        lastMark = 0
+        for i in range(len(my_list)):
+            key = lastMark
+            tempVal = 0.0
+            if key in values:
+                tempVal = values[key]
+            tempVal += my_list[i]['time'] - lastTimeMark
+            values[key] = tempVal
+            lastTimeMark = my_list[i]['time']
+            lastMark = my_list[i]['value']
+        values[lastMark] += total_time - lastTimeMark
     return values
 
 
 def get_max_ts(my_list: list) -> float:
     seq = [x['value'] for x in my_list]
-    return max(seq)
+    return max(seq) if seq else 0.0
 
 
 def get_min_ts(my_list: list) -> float:
     seq = [x['value'] for x in my_list]
-    return min(seq)
+    return min(seq) if seq else 0.0
 
 
 def get_bin_percent_ts(my_dict: dict, total_time: float, my_label: str = '') -> dict:
@@ -199,6 +200,10 @@ def print_obj_list(my_list: list, my_method: str, label: str = '') -> None:
     if label != '':
         print('=== %s ===' % label)
     print(*reporter, sep="\n")
+
+
+def get_map_values(my_objs: list, my_attr: str) -> list:
+    return _get_map_values(my_objs, my_attr, False, 0.0)
 
 
 def _get_map_values(my_objs: list, my_attr: str, w_filter: bool, val: float) -> list:

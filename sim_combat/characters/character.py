@@ -1,5 +1,6 @@
-from map import Map
+from map.map import Map
 from characters.clan import Clan
+from typing import Union
 
 
 class Character:
@@ -39,11 +40,14 @@ class Character:
         return self._clan
 
     @clan.setter
-    def clan(self, value: int):
-        if value == 1:
-            self._clan = Clan.RED
-        elif value == 2:
-            self._clan = Clan.BLUE
+    def clan(self, value: Union[int, Clan]):
+        if isinstance(value, Clan):
+            self._clan = value
+        else:
+            if value == 1:
+                self._clan = Clan.RED
+            elif value == 2:
+                self._clan = Clan.BLUE
 
     def move(self, center_x: float, center_y: float) -> None:
         """This function represents the interaction between my character and the environment.

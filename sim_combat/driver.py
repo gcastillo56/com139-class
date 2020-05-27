@@ -13,17 +13,19 @@ m = Map(400, 400)
 m.assign_type(TerrainType.FOREST)
 # print(m)
 
-deploy = ArmyDeploy.HORIZONTAL
+deploy = ArmyDeploy.VERTICAL
+size = 200
 
 a = Army(Clan.BLUE)
 a.army_type = CharacterType.SOLDIER
+# a.deploy = ArmyDeploy.HORIZONTAL
 a.deploy = deploy
-a.createArmy(50)
+a.createArmy(size)
 
 b = Army(Clan.RED)
 b.army_type = CharacterType.JEDI_KNIGHT
 b.deploy = deploy
-b.createArmy(50)
+b.createArmy(size)
 
 launch(m, a, b)
 

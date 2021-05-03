@@ -65,7 +65,7 @@ class MonitoredResource:
             -------
             str
                 A string with the data of the mirror lists we use to represent the state of the queues
-            """
+        """
         queues = lambda x: str(x)
         return ('%s | %d of %d slots are allocated. | Users: %s  | Queued events: %s'
                 % (self._name, len(self.in_service), self._res.capacity,

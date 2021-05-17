@@ -128,3 +128,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 /COVID/export_dataframe.xlsx
+/COVID/covid_env/Lib/*
+/COVID/covid_env/Scripts/*
+/COVID/covid_env/.gitignore
+/COVID/covid_env/pyvenv.cfg

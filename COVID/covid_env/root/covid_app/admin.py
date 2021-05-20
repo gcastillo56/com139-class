@@ -4,6 +4,7 @@ from .models import COVIDData
 
 # Register your models here.
 
+
 @admin.register(COVIDData)
 class COVIDAdmin(ImportExportModelAdmin):
     pass

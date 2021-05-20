@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.utils.safestring import SafeString
 from rest_framework import viewsets
 from rest_framework.response import Response
 
@@ -11,18 +11,19 @@ import pandas as pd
 
 
 def index(request):
-    my_json = '[ { "region": "East", "fruit": "Apples", "count": "53245" }, { "region": "West", "fruit": ' \
-                 '"Apples", "count": "28479" }]'
-    context = {'data_json':my_json}
-    return render(request, 'covid_app/donut.html', context)
+    context = {}
+    return render(request, 'covid_app/index.html', context)
 
 
 def pie_chart(request):
-    data = COVIDData.objects.all()
-    covid_df = pd.DataFrame.from_records(data)
-    my_json = '[ { "region": "East", "fruit": "Apples", "count": "53245" }, { "region": "West", "fruit": ' \
-                 '"Apples", "count": "28479" }]'
-    context = {'data_json':my_json}
+    # covid_df = pd.DataFrame.from_records(data)
+    donut_json = '[ { "region": "East", "fruit": "Apples", "count": "53245" }, { "region": "West", "fruit": ' \
+                 '"Apples", "count": "28479" }, { "region": "South", "fruit": "Apples", "count": "19697" }, ' \
+                 '{ "region": "North", "fruit": "Apples", "count": "24037" }, { "region": "Central", ' \
+                 '"fruit": "Apples", "count": "40245" }, { "region": "East", "fruit": "Oranges", "count": "200" ' \
+                 '}, { "region": "South", "fruit": "Oranges", "count": "200" }, { "region": "Central", ' \
+                 '"fruit": "Oranges", "count": "200" }] '
+    context = {'data_json': SafeString(donut_json)}
     return render(request, 'covid_app/donut.html', context)
 
 
@@ -38,9 +39,17 @@ class StateSexAgeSet(viewsets.ViewSet):
     serializer_class = StateSexAgeSerializer
 
     def list(self, request, *args, **kwargs):
-        age = request.GET['age']
-        covid_df = pd.DataFrame.from_records(COVIDData.objects.filter(edad__gt=age). \
-                                             values('id_registro', 'sexo', 'entidad_res', 'municipio_res', 'edad'))
-        df = covid_df["sexo"].value_counts()
-        print(df)
-        return Response(str(covid_df.to_json(orient='records')))
+        # age = request.GET['age']
+        # covid_df = pd.DataFrame.from_records(COVIDData.objects.filter(edad__gt=age). \
+        #                                     values('id_registro', 'sexo', 'entidad_res', 'municipio_res', 'edad'))
+        # print(covid_df)
+        # df = covid_df["sexo"].value_counts()
+        # print(df)
+        # return Response(str(covid_df.to_json(orient='records')))
+        donut_json = '[ { "region": "East", "fruit": "Apples", "count": "53245" }, { "region": "West", "fruit": ' \
+                     '"Apples", "count": "28479" }, { "region": "South", "fruit": "Apples", "count": "19697" }, ' \
+                     '{ "region": "North", "fruit": "Apples", "count": "24037" }, { "region": "Central", ' \
+                     '"fruit": "Apples", "count": "40245" }, { "region": "East", "fruit": "Oranges", "count": "200" ' \
+                     '}, { "region": "South", "fruit": "Oranges", "count": "200" }, { "region": "Central", ' \
+                     '"fruit": "Oranges", "count": "200" }] '
+        return Response(SafeString(donut_json))

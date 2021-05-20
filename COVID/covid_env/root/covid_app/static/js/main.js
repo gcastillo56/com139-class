@@ -55,8 +55,6 @@ label.append("span")
     .attr("fill", "red")
     .text((d) => { return d.key; });
 
-
-
 function update(region) {
     var path = g.selectAll("path");
 

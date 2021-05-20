@@ -11,35 +11,36 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <nav class="navbar navbar-default">
-        <div class="container">
-
-        </div>
-    </nav>
-
-    <!-- Bootstrap grid setup -->
+{% block content %}
+<script>
+    data = {{ data_json }}
+</script>
+<nav class="navbar navbar-default">
     <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <form></form>
-            </div>
-         </div>
-          <div class="row">
-            <div class="col-md-12">
-                <div id="chart-area"></div>
-            </div>
+
+    </div>
+</nav>
+
+<!-- Bootstrap grid setup -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <form></form>
         </div>
     </div>
-    <script>
-        data = {{ data_json }}
-    </script>
-    <!-- External JS libraries -->
-    <script src="{% static 'js/jquery.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'js/d3.min.js' %}"></script>
-    <!-- Custom JS -->
-    <script src="{% static 'js/main.js' %}"></script>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="chart-area"></div>
+        </div>
+    </div>
+</div>
 
+<!-- External JS libraries -->
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/d3.min.js' %}"></script>
+<!-- Custom JS -->
+<script src="{% static 'js/main.js' %}"></script>
+{% endblock %}
 </body>
-
 </html>

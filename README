@@ -1,0 +1,9 @@
+GoL Simple example
+To run the code:
+If you dont have a config file:  python .\conway.py --n 200 --i 200
+--n: Size 
+--i: Generations
+
+If you have a config file:  python .\conway.py --file "Name of File"
+
+Making a file 200x200 or higher makes the program slow. Highly recommended to test with universe 100x100

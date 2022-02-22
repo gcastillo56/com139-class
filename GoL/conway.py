@@ -178,9 +178,32 @@ def update(frameNum,img, grid, N ,LogFile,ite):
     # and we go line by line 
     newGrid = grid.copy()
     # TODO: Implement the rules of Conway's Game of Life
-    global totalFigures
     global Generations 
-    def CheckObject(index: int, pattern: np.array, patternName: str,  tempCheckerGrid: np.array):
+    if Generations < ite:
+        Generations = Generations + 1
+        for x in range(1, N-1):
+            for y in range(1, N-1):
+                accum_cel = grid[x-1,y-1] + grid[x-1,y] + grid[x-1,y+1] + grid[x,y-1] + grid[x,y+1] + grid[x+1,y-1] + grid[x+1,y] + grid[x+1,y+1]
+                accum_cel /= 255
+                if grid[x,y] == 255:
+                    if accum_cel == 2 or accum_cel == 3:
+                        pass
+                    else:
+                        newGrid[x,y] = 0
+                else:
+                    if accum_cel == 3:
+                        newGrid[x,y] = 255
+        
+    else:
+        LogFile.close()
+        sys.exit()
+    # update data
+    validateFigures(newGrid,LogFile)
+    img.set_data(newGrid)
+    grid[:] = newGrid[:]
+    return img,
+
+def CheckObject(index: int, pattern: np.array, patternName: str,  tempCheckerGrid: np.array,LogFile):
         global totalFigures
         tmpCheck = _FindIfPatternExists(
             tempCheckerGrid, pattern)
@@ -213,50 +236,31 @@ def update(frameNum,img, grid, N ,LogFile,ite):
             if counter != 0:   
                 LogFile.write(
                     f"|\t> {patternName}(s) \t| {counter} |  |\n")
-    if Generations < ite:
-        Generations = Generations + 1
-        for x in range(1, N-1):
-            for y in range(1, N-1):
-                accum_cel = grid[x-1,y-1] + grid[x-1,y] + grid[x-1,y+1] + grid[x,y-1] + grid[x,y+1] + grid[x+1,y-1] + grid[x+1,y] + grid[x+1,y+1]
-                accum_cel /= 255
-                if grid[x,y] == 255:
-                    if accum_cel == 2 or accum_cel == 3:
-                        pass
-                    else:
-                        newGrid[x,y] = 0
-                else:
-                    if accum_cel == 3:
-                        newGrid[x,y] = 255
-        tempCheckerGrid = newGrid.copy()
-        LogFile.write(f"Iteration: {Generations}\n---------------------------------------------------\n")
-        LogFile.write(f"|                               | Count | Percent |\n---------------------------------------------------\n")
-        print(f"{Generations} ", end="")
-        p = Entities()
-        ents = p.GetEntities()
-
-        i = 0
-        for (name, pattern, rot) in ents:
-            CheckObject(i, pattern, name, tempCheckerGrid)
-            if rot:
-                right = np.rot90(pattern)
-                down = np.rot90(right)
-                left = np.rot90(down)
-                CheckObject(rot, right, name
-                            , tempCheckerGrid)
-                CheckObject(rot, down, name , tempCheckerGrid)
-                CheckObject(rot, left, name , tempCheckerGrid)
-                i += 1
+    
+def validateFigures(newGrid,LogFile):
+    tempCheckerGrid = newGrid.copy()
+    LogFile.write(f"Iteration: {Generations}\n---------------------------------------------------\n")
+    LogFile.write(f"|                               | Count | Percent |\n---------------------------------------------------\n")
+    print(f"{Generations} ", end="")
+    p = Entities()
+    ents = p.GetEntities()
+    global totalFigures
+    i = 0
+    for (name, pattern, rot) in ents:
+        CheckObject(i, pattern, name, tempCheckerGrid,LogFile)
+        if rot:
+            right = np.rot90(pattern)
+            down = np.rot90(right)
+            left = np.rot90(down)
+            CheckObject(rot, right, name
+                            , tempCheckerGrid,LogFile)
+            CheckObject(rot, down, name , tempCheckerGrid,LogFile)
+            CheckObject(rot, left, name , tempCheckerGrid,LogFile)
+            i += 1
             
-        LogFile.write(
-                    f"---------------------------------------------------\n| Total                          |   {totalFigures}   |        |\n---------------------------------------------------\n")
-        totalFigures = 0        
-    else:
-        LogFile.close()
-        sys.exit()
-    # update data
-    img.set_data(newGrid)
-    grid[:] = newGrid[:]
-    return img,
+    LogFile.write(
+                f"---------------------------------------------------\n| Total                          |   {totalFigures}   |        |\n---------------------------------------------------\n")
+    totalFigures = 0        
 
 def _Check( a, b, upper_left):
         ul_row = upper_left[0]

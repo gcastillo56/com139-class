@@ -309,10 +309,10 @@ def main():
     grid = np.array([])
 
     try:
-        os.remove("sim.log")
+        os.remove("analysis.txt")
     except:
         pass
-    LogFile = open("sim.log", "a+")
+    LogFile = open("analysis.txt", "a+")
 
     if args.file:
         print("Setting initial configuration with file {0}".format(args.file))

@@ -27,6 +27,7 @@ def pie_chart(request):
     return render(request, 'covid_app/donut.html', context)
 
 
+
 class StateSexSet(viewsets.ModelViewSet):
     queryset = COVIDData.objects.all()
     serializer_class = StateSexSerializer
@@ -39,17 +40,17 @@ class StateSexAgeSet(viewsets.ViewSet):
     serializer_class = StateSexAgeSerializer
 
     def list(self, request, *args, **kwargs):
-        # age = request.GET['age']
-        # covid_df = pd.DataFrame.from_records(COVIDData.objects.filter(edad__gt=age). \
-        #                                     values('id_registro', 'sexo', 'entidad_res', 'municipio_res', 'edad'))
-        # print(covid_df)
-        # df = covid_df["sexo"].value_counts()
-        # print(df)
-        # return Response(str(covid_df.to_json(orient='records')))
-        donut_json = '[ { "region": "East", "fruit": "Apples", "count": "53245" }, { "region": "West", "fruit": ' \
-                     '"Apples", "count": "28479" }, { "region": "South", "fruit": "Apples", "count": "19697" }, ' \
-                     '{ "region": "North", "fruit": "Apples", "count": "24037" }, { "region": "Central", ' \
-                     '"fruit": "Apples", "count": "40245" }, { "region": "East", "fruit": "Oranges", "count": "200" ' \
-                     '}, { "region": "South", "fruit": "Oranges", "count": "200" }, { "region": "Central", ' \
-                     '"fruit": "Oranges", "count": "200" }] '
-        return Response(SafeString(donut_json))
+        age = request.GET['age']
+        covid_df = pd.DataFrame.from_records(COVIDData.objects.filter(edad__gt=age). \
+                                            values('id_registro', 'sexo', 'entidad_res', 'municipio_res', 'edad'))
+        print(covid_df)
+        df = covid_df["sexo"].value_counts()
+        print(df)
+        return Response(str(covid_df.to_json(orient='records')))
+        # donut_json = '[ { "region": "East", "fruit": "Apples", "count": "53245" }, { "region": "West", "fruit": ' \
+        #             '"Apples", "count": "28479" }, { "region": "South", "fruit": "Apples", "count": "19697" }, ' \
+        #             '{ "region": "North", "fruit": "Apples", "count": "24037" }, { "region": "Central", ' \
+        #             '"fruit": "Apples", "count": "40245" }, { "region": "East", "fruit": "Oranges", "count": "200" ' \
+        #             '}, { "region": "South", "fruit": "Oranges", "count": "200" }, { "region": "Central", ' \
+        #             '"fruit": "Oranges", "count": "200" }] '
+        # return Response(SafeString(donut_json))

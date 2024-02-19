@@ -7,6 +7,7 @@ class Glider(object):
         self.fly_distance = 0.0
         self.id = id
         self.boost = boost
+        
         self.action = self.env.process(self.glide())
 
 
@@ -15,33 +16,32 @@ class Glider(object):
             try:
                 print('I am gliding (Glider %d) starting at %.2f' % (self.id, self.env.now))
                 gliding_time = abs(random.normalvariate(4))
-                print("Glide (Glider %d): %.2f" % (self.id, gliding_time))
-                yield self.env.timeout(gliding_time)
+                print("Will glide (Glider %d): %.2f" % (self.id, gliding_time))
+                factor = 1
                 if gliding_time >= 3:
-                    print("Should Boost (Glider %d)" % self.id)
                     with self.boost.request() as req:
-                        yes = yield req | self.env.timeout(7)
-                        if yes:
-                            print("Boost (Glider %d)" % self.id)
-                            gliding_time *= 1.2
+                        yes = yield req | self.env.timeout(0.01)
+                        if req in yes:
+                            print("***** Boost (Glider %d) *****" % self.id)
+                            factor = 1.2
                         else:
-                            print("No Boost (Glider %d)" % self.id)
-                        
-                        
-                # print("Glide_a: %.2f" % gliding_time)
-                self.fly_distance += gliding_time
+                            print("+++++ No Boost (Glider %d) +++++" % self.id)
+                        yield self.env.timeout(gliding_time)
+                else:
+                    yield self.env.timeout(gliding_time)
+                self.fly_distance += (gliding_time * factor)
 
                 # print('Wind is gone at %.2f' % self.env.now)
                 no_wind_time = abs(random.normalvariate())
                 print("No wind (Glider %d): %.2f" % (self.id, no_wind_time))
                 yield self.env.timeout(no_wind_time)
             except simpy.Interrupt:
-                print("Glider %d down at %.2f" % (self.id, self.env.now))
+                print("----- Glider %d down at %.2f ------" % (self.id, self.env.now))
                 return
 
 def netShooter(env: simpy.Environment, glider: Glider):
     shoot_time = abs(random.normalvariate(15))
-    print('Shooting in %.2f' % shoot_time)
+    print('>>>>  Shooting in %.2f  <<<<' % shoot_time)
     yield env.timeout(shoot_time)
     glider.action.interrupt()
 
@@ -50,7 +50,6 @@ env = simpy.Environment()
 booster = simpy.Resource(env, 1)
 glider1 = Glider(1, env, booster)
 glider2 = Glider(2, env, booster)
-
 env.process(netShooter(env, glider1))
 env.process(netShooter(env, glider2))
 env.run(until=20)

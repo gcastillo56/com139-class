@@ -16,12 +16,8 @@ class Runner(object):
             try:
                 with self.res.request() as req:
                     print('The runner %d request boost at %.2f' % (self.id, self.env.now))
-                    print(req)
-                    wait_time = self.env.now
-                    result = yield req 
-                    wait_time = self.env.now - wait_time
-                    print()
-                    if wait_time == 0:
+                    result = yield req | self.env.timeout(0.1)
+                    if req in result:
                         print('The runner %d started running at %.2f' % (self.id, self.env.now))
                         energy_boost = abs(random.normalvariate(5,1))
                         # print("boost: %.2f" % energy_boost)
@@ -32,11 +28,9 @@ class Runner(object):
                         else:
                             self.total_distance += energy_boost * 600
                     else:
-                        print("No boost this time")
-                
+                        print("Runner %d got no boost this time" % self.id)
                 print('The runner %d is walking at %.2f' % (self.id, self.env.now))
                 recovery_time = abs(random.normalvariate(2,1))
-                # print("recovery: %.2f" % recovery_time)
                 self.total_rest += recovery_time
                 yield self.env.timeout(recovery_time)
                 self.total_distance += recovery_time * 100

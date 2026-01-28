@@ -88,7 +88,7 @@ class Product(object):
     def processBy(self, value: int) -> None:
         self._currentStation = value
         self._wrkStat[value] = True
-        self._wrkStatTime[value] = self._env.now
+        self._wrkStatTime[value] = int(self._env.now)
         if(self._currentStation == 0):
             self.status = ProductStatus.PRODUCING
         debugLog(Debug.DEBUG, 'The product %06d received at workstation %02d at %.2f' % (self._id, (self._currentStation+1), self._wrkStatTime[value]))
@@ -102,7 +102,7 @@ class Product(object):
         return self.status == ProductStatus.ABORT
     
     @property
-    def nextStation(self) -> int:
+    def nextStation(self) -> int | None:
         """Returns the next workstation that the product still has to visit
 
         Returns:
@@ -137,11 +137,11 @@ class Workstation(object):
         self._action = None
     
     @property
-    def id(self) -> simpy.Process:
+    def id(self) -> int:
         return self._id + 1
     
     @property
-    def action(self) -> simpy.Process:
+    def action(self) -> simpy.Process | None:
         return self._action
     
     @action.setter
@@ -153,7 +153,7 @@ class Workstation(object):
         return self._unit
     
     @property
-    def product(self) -> Product:
+    def product(self) -> Product | None:
         return self._product
     
     @product.setter
@@ -166,7 +166,10 @@ class Workstation(object):
         if self._product:
             self._product.stopProduction(time)
     
-    def processProd(self) -> simpy.Process:
+    def processProd(self) :
+        if self.product is None:
+            debugLog(Debug.ERROR, "No product assigned to workstation %d at %.2f" % (self.id, self._env.now))
+            return
         try:
             # Check if I have enough items to work
             if(self._binItems == 0):
@@ -235,13 +238,15 @@ class Factory(object):
     def getWorkstation(self, index : int) -> Workstation:
         return self._workstations[index]
     
-    def orderProduct(self, id: int) -> simpy.Process:
+    def orderProduct(self, id: int) :
         if(self._status == FactoryStatus.CLOSED):
             return
         prod = Product(id, self._env)
         self._storage.append(prod)
         while not prod.isDone:
             idx = prod.nextStation
+            if idx is None:
+                break
             # Check the situation of parallel stations
             if(idx == 3):   # station 4
                 if(not prod.wasProccessedBy(4) and self.getWorkstation(idx).unit.count > self.getWorkstation(idx+1).unit.count):
@@ -258,7 +263,7 @@ class Factory(object):
             else:
                 prod.status = ProductStatus.DONE
         
-    def produce(self) -> simpy.Process:
+    def produce(self) :
         i = 0
         # for i in range(5):
         while True:
@@ -266,7 +271,7 @@ class Factory(object):
             yield self._env.timeout(0.1)
             i += 1
           
-    def shutDown(self) -> None:
+    def shutDown(self) :
         if random.random() < CLOSE_RATE:
             closing_in = abs(random.normalvariate(12,1))
             debugLog(Debug.INFO, "Factory will close today in %d units." % closing_in)

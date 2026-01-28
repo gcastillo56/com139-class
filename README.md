@@ -6,6 +6,5 @@ If you can not find the content you were expecting, please make sure you are loo
 
 ### Class examples
 
-- Game of Life (GoL): Base code for the Game of Life project
-- Single Server: Class project used to do the Bank simulation in class. This project uses simPy and matplotlib.
-- Fluid Simulation: Base code for the Fluid Simulation project.
+- Bank: Class project used to do the Bank simulation in class. This project uses simPy and matplotlib.
+- Factory: Example of SimPy based on a manufacturing facility.

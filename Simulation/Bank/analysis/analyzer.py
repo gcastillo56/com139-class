@@ -1,4 +1,4 @@
-from statistics import *
+from statistics import mean, median, mode, stdev, variance, StatisticsError
 import math
 import matplotlib.pyplot as plt
 import numpy as np
@@ -22,7 +22,7 @@ def autolabel(rects, ax):
 
 # Time series methods
 def print_ts(my_list: list, label: str = '') -> None:
-    def data_elements(x): return str('%8.3f - %d' % (x['time'], x['value']))
+    data_elements = lambda x: str('%8.3f - %d' % (x['time'], x['value']))
     data = list(map(data_elements, my_list))
     if label != '':
         print('\n=== %s ===' % label)
@@ -32,8 +32,8 @@ def print_ts(my_list: list, label: str = '') -> None:
 def plot_ts(my_list: list, total_time: float, my_label: str = '', x_label: str = 'Time ->', y_label: str = '') -> None:
     fig, ax = plt.subplots()
 
-    def plot_x(x): return x['time']
-    def plot_y(x): return x['value']
+    plot_x = lambda x: x['time']
+    plot_y = lambda x: x['value']
 
     # Main graph
     ax.set_title("TS plot for %s" % my_label)
@@ -52,7 +52,7 @@ def hist_bar_ts(my_list: list, my_field: str, my_label: str = '', x_label: str =
                 y_label: str = 'Instances') -> None:
     fig, ax = plt.subplots()
 
-    def plot_y(x): return x[my_field]
+    plot_y = lambda x: x[my_field]
     bins = list(dict.fromkeys(map(plot_y, my_list)))
     bins.sort()
     bins.append(bins[len(bins)-1]+1)
@@ -69,12 +69,11 @@ def hist_bar_ts(my_list: list, my_field: str, my_label: str = '', x_label: str =
     ax.set_ylim(0, math.ceil(max(hist[0]) * 1.2))
     # Align properly the label for the bins
     bin_w = (max(bins) - min(bins)) / (len(bins) - 1)
-    plt.xticks(np.arange(min(bins) + bin_w / 2, max(bins)+1, bin_w), bins)
+    plt.xticks(np.arange(min(bins) + bin_w / 2, max(bins), bin_w), bins)
     plt.xlim(bins[0], bins[-1])
     # Set the labels on top of the bars
     for i in range(len(bins)-1):
-        plt.text(hist[1][i] + ((min(bins) + bin_w / 2) * 0.9),
-                 0.15 + hist[0][i], str(int(hist[0][i])))
+        plt.text(float(hist[1][i] + ((min(bins) + bin_w / 2) * 0.9)), float(0.15 + hist[0][i]), str(int(hist[0][i])))
     plt.show()
 
 
@@ -86,8 +85,7 @@ def evolution_bar_ts(my_list: list, total_time: float, my_label: str = '',
     # Prepare the data for the multiple plots overlay
     list_size = len(my_list)
     for i in range(list_size):
-        next_time = my_list[i +
-                            1]['time'] if (i + 1) < list_size else total_time
+        next_time = my_list[i + 1]['time'] if (i + 1) < list_size else total_time
         width.append(next_time - my_list[i]['time'])
         if my_list[i]['time'] != next_time:
             trend_x.append(my_list[i]['time'])
@@ -99,8 +97,8 @@ def evolution_bar_ts(my_list: list, total_time: float, my_label: str = '',
         trend_y.insert(0, 0.0)
     trend_x = np.array(trend_x)
     trend_y = np.array(trend_y)
-    def plot_x(x): return x['time']
-    def plot_y(x): return x['value']
+    plot_x = lambda x: x['time']
+    plot_y = lambda x: x['value']
     x_values = list(map(plot_x, my_list))
     y_values = list(map(plot_y, my_list))
     fig, ax = plt.subplots()
@@ -110,8 +108,7 @@ def evolution_bar_ts(my_list: list, total_time: float, my_label: str = '',
     # Y-axis settings
     ax.set_ylabel(y_label)
     ax.set_ylim(0, get_max_ts(my_list) * 1.5)
-    # set the position of the x ticks
-    ax.set_yticks(list(dict.fromkeys(map(plot_y, my_list))))
+    ax.set_yticks(list(dict.fromkeys(map(plot_y, my_list))))  # set the position of the x ticks
     # ax.set_yticklabels(('X1', 'X2', 'X3', 'X4', 'X5'))
     # X-axis settings
     ax.set_xlabel(x_label)
@@ -125,25 +122,21 @@ def evolution_bar_ts(my_list: list, total_time: float, my_label: str = '',
         xnew = np.linspace(trend_x.min(), trend_x.max(), 20)
         spl = make_interp_spline(trend_x, trend_y)  # type: BSpline
         power_smooth = spl(xnew)
-        plt.plot(xnew, power_smooth, color='darkgreen',
-                 zorder=2, label='Smooth trend')
+        plt.plot(xnew, power_smooth, color='darkgreen', zorder=2, label='Smooth trend')
     except ValueError:
         print("Can't produce smooth curve. There is not enough data or variance.")
     # Plot of actual change of values over time with constant value
     plt.plot(trend_x, trend_y, color='red', zorder=2, label='Trend')
 
     # Scatter plot to point out change points where final value remain unchanged
-    plt.scatter(x_values, y_values, s=15, color='orange',
-                zorder=3, label='Change points')
+    plt.scatter(x_values, y_values, s=15, color='orange', zorder=3, label='Change points')
 
     ax.legend()
     plt.show()
 
 
-def cumulative_time_ts(my_list: list, total_time: float, my_label: str = '',
-                       x_label: str = '', y_label: str = 'Time') -> None:
-    cumulative_time_ts(get_cumulative_time_ts(
-        my_list, total_time), my_label, x_label, y_label)
+# def cumulative_time_ts(my_list: list, total_time: float, my_label: str = '', x_label: str = '', y_label: str = 'Time') -> None:
+#     cumulative_time_ts(get_cumulative_time_ts(my_list, total_time), my_label, x_label, y_label)
 
 
 def cumulative_time_ts(values: dict, my_label: str = '', x_label: str = '', y_label: str = 'Time') -> None:
@@ -154,7 +147,7 @@ def cumulative_time_ts(values: dict, my_label: str = '', x_label: str = '', y_la
     ax.set_title("Cumulative time in states for %s" % my_label)
     ax.set_xticks(list(values.keys()))  # set the position of the x ticks
 
-    bars = plt.bar(values.keys(), values.values())
+    bars = plt.bar(list(values.keys()), list(values.values()))
     autolabel(bars, ax)
     plt.show()
 
@@ -201,7 +194,7 @@ def get_bin_percent_ts(my_dict: dict, total_time: float, my_label: str = '') -> 
 
 # Object methods
 def print_obj_list(my_list: list, my_method: str, label: str = '') -> None:
-    def report(x): return getattr(x, my_method)()
+    report = lambda x: getattr(x, my_method)()
     reporter = list(map(report, my_list))
     if label != '':
         print('=== %s ===' % label)
@@ -213,7 +206,7 @@ def get_map_values(my_objs: list, my_attr: str) -> list:
 
 
 def _get_map_values(my_objs: list, my_attr: str, w_filter: bool, val: float) -> list:
-    def values(x): return getattr(x, my_attr)
+    values = lambda x: getattr(x, my_attr)
     data = list(map(values, my_objs))
     if w_filter:
         data = list(filter(lambda a: a != val, data))
@@ -221,8 +214,12 @@ def _get_map_values(my_objs: list, my_attr: str, w_filter: bool, val: float) -> 
 
 
 def objects_as_str(my_objs: list) -> str:
-    def strings(x): return str(x)
+    strings = lambda x: str(x)
     return str(list(map(strings, my_objs)))
+
+
+def get_total_obj(my_objs: list, my_attr: str, w_filter: bool = False, val: float = 0.0) -> float:
+    return sum(_get_map_values(my_objs, my_attr, w_filter, val))
 
 
 def get_max_obj(my_objs: list, my_attr: str, w_filter: bool = False, val: float = 0.0) -> float:
@@ -235,15 +232,6 @@ def get_min_obj(my_objs: list, my_attr: str, w_filter: bool = False, val: float 
 
 def get_mean_obj(my_objs: list, my_attr: str, w_filter: bool = False, val: float = 0.0) -> float:
     return mean(_get_map_values(my_objs, my_attr, w_filter, val))
-
-
-def get_mode_obj(my_objs: list, my_attr: str, w_filter: bool = False, val: float = 0.0) -> float:
-    return mean(_get_map_values(my_objs, my_attr, w_filter, val))
-
-
-def get_mean_obj(my_objs: list, my_attr: str, w_filter: bool = False, val: float = 0.0) -> float:
-    return mean(_get_map_values(my_objs, my_attr, w_filter, val))
-
 
 def get_median_obj(my_objs: list, my_attr: str, w_filter: bool = False, val: float = 0.0) -> float:
     return median(_get_map_values(my_objs, my_attr, w_filter, val))

@@ -46,12 +46,12 @@ class Customer:
         """
         self._id = id
         self.patience = random.uniform(MIN_PATIENCE, MAX_PATIENCE)
-        self.arrive = -1
-        self.serve = -1
-        self._leave = -1
-        self.wait = -1
-        self.total_time = -1
-        self.serving_time = -1
+        self.arrive = -1.0
+        self.serve = -1.0
+        self._leave = -1.0
+        self.wait = -1.0
+        self.total_time = -1.0
+        self.serving_time = -1.0
         self.status = Status.WAIT
 
     def __str__(self) -> str:

@@ -10,6 +10,7 @@ def report_all_by_field_obj(my_objs: list, my_field: str, w_filter: bool = False
     if not is_status:
         max_time = get_max_obj(my_objs, my_field, w_filter, val)
         min_time = get_min_obj(my_objs, my_field, w_filter, val)
+        print('Total %s: %5.3f' % (my_field, get_total_obj(my_objs, my_field, w_filter, val)))
         print('Max %s: %5.3f by %s' %
               (my_field, max_time, objects_as_str(get_matching_value_obj(my_objs, my_field, max_time))))
         print('Min %s: %5.3f by %s' %
@@ -25,9 +26,9 @@ def report_all_by_field_obj(my_objs: list, my_field: str, w_filter: bool = False
         # TODO: Calculate the percentage of minimal value
         # TODO: Group std dev customers and display the list
     else:
-        print(is_status)
         values = get_map_values(my_objs, my_field)
-        print(values)
+        print('Succeded: %d' % values.count(Status.SUCCESS))
+        print('Reneged: %d' % values.count(Status.RENEGED))
         # TODO: get a histogram count on every status
         # TODO: graph the histogram
         # TODO: get success rate

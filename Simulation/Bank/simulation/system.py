@@ -55,11 +55,11 @@ class SimSystem:
         msg = '%8.4f %s | ' % (time, customer)
         if customer.status == Status.WAIT:
             if customer.wait == -1:  # When the gen_customer just arrives
-                customer.arrive = time
+                customer.arrive = float(time)
                 msg += 'Arrived  - Here I am'
                 res.enqueue(time, customer)
             else:  # When the gen_customer is ready to be served
-                customer.serve = time
+                customer.serve = float(time)
                 msg += 'Serving now. Waited %6.3f' % customer.wait
                 res.give_service(time, customer)
         elif customer.status == Status.SUCCESS:  # When the gen_customer was successfully served
@@ -77,7 +77,7 @@ class SimSystem:
             # print('%8.4f %s | %s' % (time, gen_customer, res.print_stats()))
             print('%8.4f %s | %s' % (time, customer, res))
 
-    def source(self, number: int, interval: int, m_res: MonitoredResource) -> simpy.Process:
+    def source(self, number: int, interval: float, m_res: MonitoredResource) :
         """Generates customers randomly
 
             Parameters
@@ -101,7 +101,7 @@ class SimSystem:
             t = random.expovariate(1.0 / interval)
             yield self.env.timeout(t)
 
-    def gen_customer(self, name: int, m_res: MonitoredResource, time_in_bank: float) -> simpy.Process:
+    def gen_customer(self, name: int, m_res: MonitoredResource, time_in_bank: float) :
         """Customer arrives, is served and leaves.
 
             This is the method that models the interaction of the gen_customer with the system. This is also
@@ -128,7 +128,7 @@ class SimSystem:
             self.log_event(m_res, c)
             # Wait for the counter or abort at the end of our tether
             results = yield req | self.env.timeout(c.patience)
-            c.wait = self.env.now - c.arrive
+            c.wait = float(self.env.now - c.arrive)
 
             if req in results:
                 # We got to the counter
@@ -142,7 +142,7 @@ class SimSystem:
                 c.status = Status.RENEGED
         self.log_event(m_res, c)
 
-    def run(self) -> (list, MonitoredResource, float):
+    def run(self) -> tuple[list, MonitoredResource, float]:
         """Prepares and executes the simulation.
 
             Returns
